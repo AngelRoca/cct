@@ -22,57 +22,81 @@ function get_mongo_info($client){
 		$fp=fopen("cct.csv", "r");
 
 $vars = array(
-	"turno",			//0
-	"num_grupos",		//1
-	"num_alumnos",		//2
-	"num_personal",		//3
-	"cct",				//4
-	"cct_escuelas",		//5
-
-	"nombre",			//6
-	"edo",				//7
-	"calle",			//8
-	"numero_dir",		//9
-	"cp",				//10
-	"tipo",				//11
-	"telefono",			//12
-	"status",			//13
-	"nivel"			    //14
+	"turno",
+	"num_grupos",
+	"num_alumnos",
+	"num_personal",
+	"cct",
+	"id_turno",// La division la tendremos aqui <6
+	"cct_escuelas",
+	"edo_en_mapa",
+	"persona_responsable",
+	"nombre_en_mapa",
+	"edo",
+	"cp",
+	"tipo",
+	"fecha",
+	"dato4",
+	"dato3",
+	"dato2",
+	"dato1",
+	"coord1",
+	"coord2",
+	"nombre",
+	"telefono",
+	"localidad_en_mapa",
+	"status",
+	"nivel",
+	"municipio_en_mapa",
+	"rezago_social",
+	"numero_dir",
+	"municipio",
+	"calle"
 	);
 
 		while (($data=fgetcsv($fp))!==false) {
 			$values=array();
 			foreach ($data as $cct) {
 				$aux = $c->find(array('cct_escuelas'=>$cct));
-echo "<div class='left'>";
-				echo $cct."<br/>";
+				$turnos="";
 				 if(count($aux)>0){
 				 	foreach($aux as $e) {
-				 		echo $e["cct"]."<br/>";
-				 		for($i=0;$i<15;$i++){
-				 			try{
+				 		echo "<pre>";
+				 		//var_dump($e);
+				 		echo "</pre>";
+				 		$flag=false;
+				 		$salida="";
+				 		$turnos.=$e["turno"]."<br/>";
+				 		for($i=0;$i<count($vars);$i++){
 				 				if(!isset($values[$vars[$i]])){
 				 					$values[$vars[$i]]=$e[$vars[$i]];
 				 				}else{
-					 				if($i<5){
+					 				if($i<6){
 					 					if($values[$vars[$i]]==$e[$vars[$i]]){
-					 						echo "==>".$vars[$i]." IGUALES.<br/>";
+					 						$flag=true;
+					 						$salida.="==>".$vars[$i]." IGUALES.<br/>";
 					 					}
 					 				}
 					 				else{
 					 					if($values[$vars[$i]]!=$e[$vars[$i]]){
-					 						echo "==>".$vars[$i]." DIFERENTES.<br/>";
+					 						$flag=true;
+					 						$salida.="==>".$vars[$i]." DIFERENTES.<br/>";
 					 					}
 					 				}
 					 			}
-					 		}catch(Exception $e){}
 				 		}
-
+				 		if($flag==true){
+				 			echo "<div class='left'>";
+					 				echo $cct."<br/>";
+					 				echo $turnos;
+					 				echo $salida;
+					 		echo "</div>";
+					 		$turnos="";
+					 			}
 	                 }
 			$values=null;
 			$values=array();
 				 }
-echo "</div>";
 			}
 		}
 }
@@ -81,7 +105,7 @@ echo "</div>";
 
 <html>
 <head>
-	<style type="text/css">.left{width: 22%;margin: 20px; background-color: #c4c4c4;}</style>
+	<style type="text/css">.left{width: 30%;margin: 20px; background-color: #c4c4c4;}</style>
 </head>
 <body>
 <?php 
